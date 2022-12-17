@@ -1,10 +1,10 @@
 import fs from "fs";
 import validator from "validator";
-import customError from "./utils.js";
+import customeError from "./utils.js";
 
 // Database actions
 
-const getDataFromDatabase = () => {
+export const getDataFromDatabase = () => {
   try {
     const buffer = fs.readFileSync("users-db.json");
     return JSON.parse(buffer.toString());
@@ -13,17 +13,17 @@ const getDataFromDatabase = () => {
   }
 };
 
-const writeToDatabase = (data) => {
+export const writeToDatabase = (data) => {
   fs.writeFileSync("users-db.json", JSON.stringify(data));
 };
 
 // utils
 
-const checkForDuplicates = (data, id) => {
+export const checkForDuplicates = (data, id) => {
   return Boolean(data.find((user) => user.id === id));
 };
 
-const findUserById = (data, id) => {
+export const findUserById = (data, id) => {
   const user = data.find((user) => user.id === id);
   if (!user) {
     const error = new Error("User not found");
@@ -35,12 +35,12 @@ const findUserById = (data, id) => {
 
 // Users manipulation
 
-const getUser = (id) => {
+export const getUser = (id) => {
   const data = getDataFromDatabase();
   return findUserById(data, id);
 };
 
-const addUser = ({ id, cash = 0, credit = 0 } = {}) => {
+export const addUser = ({ id, cash = 0, credit = 0 } = {}) => {
   const data = getDataFromDatabase();
   if (checkForDuplicates(data, id)) {
     const err = new Error("User already exists !");
@@ -54,7 +54,7 @@ const addUser = ({ id, cash = 0, credit = 0 } = {}) => {
   return id + " added";
 };
 
-const deposit = (id, amount) => {
+export const deposit = (id, amount) => {
   if (!validator.isNumeric(amount.toString())) {
     const err = new Error("Invalid amount");
     err.code = 400;
@@ -67,7 +67,7 @@ const deposit = (id, amount) => {
   writeToDatabase(data);
 };
 
-const updateCredit = (id, amount) => {
+export const updateCredit = (id, amount) => {
   if (!validator.isNumeric(amount.toString()) || +amount < 0) {
     const err = new Error("Invalid amount");
     err.code = 400;
@@ -80,7 +80,7 @@ const updateCredit = (id, amount) => {
   writeToDatabase(data);
 };
 
-const withdraw = (id, amount) => {
+export const withdraw = (id, amount) => {
   if (!validator.isNumeric(amount.toString()) || +amount < 0) {
     const err = new Error("Invalid amount");
     err.code = 400;
@@ -99,7 +99,7 @@ const withdraw = (id, amount) => {
   writeToDatabase(data);
 };
 
-const transfer = (giverId, receiverId, amount) => {
+export const transfer = (giverId, receiverId, amount) => {
   if (!validator.isNumeric(amount.toString()) || +amount < 0) {
     const err = new Error("Invalid amount");
     err.code = 400;
@@ -121,7 +121,7 @@ const transfer = (giverId, receiverId, amount) => {
   writeToDatabase(data);
 };
 
-const filterByAmount = (amount) => {
+export const filterByAmount = (amount) => {
   if (!validator.isNumeric(amount.toString()) || +amount < 0) {
     const err = new Error("Invalid amount");
     err.code = 400;
@@ -131,7 +131,7 @@ const filterByAmount = (amount) => {
   return data.filter((user) => user.cash >= +amount);
 };
 
-module.exports = {
+/* module.exports = {
   addUser,
   getUser,
   getDataFromDatabase,
@@ -140,4 +140,4 @@ module.exports = {
   withdraw,
   transfer,
   filterByAmount,
-};
+}; */
